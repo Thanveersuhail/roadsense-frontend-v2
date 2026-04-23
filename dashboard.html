@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head/x-icon" href="favicon.ico" />
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>RoadSense AI Dashboard</title>
+  
+
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+  <link rel="stylesheet" href="./style.css" />
+</head>
+<body>
+  <header class="topbar">
+  <div>
+    <h1>RoadSense AI</h1>
+    <p>Road Anomaly Monitoring Dashboard</p>
+  </div>
+
+  <div class="topbar-actions">
+    <span id="lastUpdatedText">Last updated: --</span>
+    <button id="refreshBtn" class="refresh-btn">Refresh Data</button>
+    <button id="exportBtn" class="export-btn">Export CSV</button>
+  </div>
+</header>
+
+  <main class="page">
+    <section class="stats-row">
+      <div class="stat-card">
+        <span class="stat-label">Total events</span>
+        <strong id="totalEvents">0</strong>
+      </div>
+      <div class="stat-card">
+        <span class="stat-label">Critical events</span>
+        <strong id="criticalEvents">0</strong>
+      </div>
+      <div class="stat-card">
+        <span class="stat-label">Most common class</span>
+        <strong id="maxSeverity">0</strong>
+      </div>
+    </section>
+    <div class="status-chips">
+  <span id="liveChip" class="chip chip-live">Live</span>
+  <span id="criticalChip" class="chip chip-critical">Critical: 0</span>
+  <span id="normalChip" class="chip chip-normal">Normal: 0</span>
+</div>
+
+    <section class="layout">
+      <aside class="sidebar">
+        <h2>Filters</h2>
+
+        <label for="classFilter">Anomaly class</label>
+        <select id="classFilter">
+          <option value="all">All</option>
+          <option value="pothole">Pothole</option>
+<option value="crack">Crack</option>
+<option value="alligator_crack">Alligator crack</option>
+<option value="rough_patch">Rough patch</option>
+<option value="manhole">Manhole</option>
+        </select>
+
+        <label for="severityFilter">Minimum severity</label>
+        <select id="severityFilter">
+          <option value="0">All</option>
+          <option value="0.3">0.3+</option>
+          <option value="0.5">0.5+</option>
+          <option value="0.7">0.7+</option>
+        </select>
+        <button id="resetFiltersBtn" class="reset-btn">Reset Filters</button>
+        <div class="legend">
+          <h3>Legend</h3>
+          <div class="legend-item"><span class="dot pothole"></span> Pothole</div>
+          <div class="legend-item"><span class="dot longitudinal_crack"></span> Longitudinal crack</div>
+          <div class="legend-item"><span class="dot transverse_crack"></span> Transverse crack</div>
+          <div class="legend-item"><span class="dot alligator_crack"></span> Alligator crack</div>
+          <div class="legend-item"><span class="dot patch_repair_area"></span> Patch / repair area</div>
+          <div class="legend-item"><span class="dot other_surface_damage"></span> Other surface damage</div>
+          <div class="legend-item"><span class="dot manhole_utility_cover"></span> Manhole / utility cover</div>
+        </div>
+      </aside>
+
+      <section class="map-section">
+        <div class="map-note">
+  Live map of road anomaly events. Red markers indicate critical defects.
+</div>
+        <div id="map"></div>
+      </section>
+
+      <section class="right-panel">
+  <div class="table-section">
+    <h2>Detected Events</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Class</th>
+          <th>Severity</th>
+          <th>Confidence</th>
+          <th>Time</th>
+        </tr>
+      </thead>
+      <tbody id="eventsTableBody"></tbody>
+    </table>
+  </div>
+
+  
+  <div class="detail-section">
+    <h2>Event Details</h2>
+    <div id="eventDetails" class="detail-card">
+      <p>Select an event to view details.</p>
+    </div>
+  </div>
+  <div class="card activity-card">
+  <h3>Recent Activity</h3>
+  <div id="activityList" class="activity-list"></div>
+</div>
+</section>
+    </section>
+  </main>
+
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+  <script src="./app.js"></script>
+</body>
+</html>

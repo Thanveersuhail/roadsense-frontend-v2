@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>RoadSense Mobile</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 16px;
+      background: #f4f7fb;
+      color: #1f2937;
+    }
+
+    .container {
+      max-width: 520px;
+      margin: 0 auto;
+    }
+
+    h1 {
+      margin-bottom: 6px;
+      font-size: 28px;
+    }
+
+    p {
+      margin-top: 0;
+      color: #475569;
+    }
+
+    .card {
+      background: #ffffff;
+      border-radius: 14px;
+      padding: 16px;
+      margin-bottom: 16px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+    }
+
+    video,
+    img,
+    canvas {
+      width: 100%;
+      max-width: 100%;
+      border-radius: 10px;
+      background: #dbe4ee;
+    }
+
+    canvas {
+      display: none;
+    }
+
+    .btn-group {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    button,
+    a.download-link {
+      border: none;
+      border-radius: 10px;
+      padding: 12px 14px;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      text-align: center;
+      text-decoration: none;
+      display: inline-block;
+    }
+
+    button {
+      background: #0f172a;
+      color: white;
+    }
+
+    button:hover {
+      background: #1e293b;
+    }
+
+    a.download-link {
+      background: #2563eb;
+      color: white;
+      display: none;
+    }
+
+    .status-box {
+      white-space: pre-wrap;
+      background: #0f172a;
+      color: #e2e8f0;
+      border-radius: 10px;
+      padding: 12px;
+      min-height: 72px;
+      font-size: 14px;
+    }
+
+    .meta {
+      font-size: 14px;
+      line-height: 1.6;
+      color: #334155;
+    }
+
+    .label {
+      font-weight: 700;
+      color: #0f172a;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>RoadSense AI</h1>
+    <p>Mobile prototype page for camera, GPS, snapshot, and backend upload.</p>
+
+    <div class="card">
+      <video id="video" autoplay playsinline muted></video>
+
+      <div class="btn-group">
+        <button id="startCameraBtn">Open Camera</button>
+        <button id="gpsBtn">Get GPS</button>
+        <button id="loadModelBtn">Load Model</button>
+        <button id="captureBtn">Capture Snapshot</button>
+        <button id="sendSnapshotBtn">Send Snapshot to Backend</button>
+        <a id="downloadSnapBtn" class="download-link" href="#" download="roadsense_snapshot.jpg">Download Snapshot</a>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>Snapshot Preview</h3>
+      <canvas id="snapshotCanvas"></canvas>
+      <img id="snapshotPreview" alt="Snapshot preview" style="display:none;" />
+    </div>
+
+    <div class="card">
+      <h3>Location</h3>
+      <div class="meta">
+        <div><span class="label">Latitude:</span> <span id="latText">-</span></div>
+        <div><span class="label">Longitude:</span> <span id="lonText">-</span></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>Status</h3>
+      <div id="statusBox" class="status-box">Ready.</div>
+    </div>
+  </div>
+
+  <script src="mobile.js"></script>
+</body>
+</html>

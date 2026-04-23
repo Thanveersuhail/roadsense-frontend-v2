@@ -347,7 +347,7 @@ async function loadEventsFromBackend() {
       </tr>
     `;
 
-    const response = await fetch("http://127.0.0.1:8000/api/events/?format=json");
+    const response = await fetch("https://roadsense-backend-v2.onrender.com/api/events/?format=json");
     if (!response.ok) {
       throw new Error(`HTTP ${response.status}`);
     }

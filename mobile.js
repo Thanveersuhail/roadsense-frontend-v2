@@ -145,7 +145,7 @@ async function sendSnapshotToBackend() {
     formData.append("speed_kmph", 18.5);
     formData.append("detected_at", new Date().toISOString());
 
-    const res = await fetch("http://10.180.230.35:8000/api/detect/", {
+    const res = await fetch("https://roadsense-backend-v2.onrender.com/api/detect/", {
       method: "POST",
       body: formData
     });

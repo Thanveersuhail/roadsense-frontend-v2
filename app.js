@@ -120,7 +120,7 @@ function showEventDetails(event) {
     const clean = String(path).replace(/^\/+/, "");
     return clean.startsWith("http://") || clean.startsWith("https://")
       ? clean
-      : `http://127.0.0.1:8000/${clean}`;
+      : `https://roadsense-backend-v2.onrender.com${clean}`;
   }
 
   const cropUrl = buildUrl(event.image_crop_path);

@@ -53,10 +53,11 @@
         <select id="classFilter">
           <option value="all">All</option>
           <option value="pothole">Pothole</option>
-<option value="crack">Crack</option>
+<option value="longitudinal_crack">Longitudinal crack</option>
+<option value="transverse_crack">Transverse crack</option>
 <option value="alligator_crack">Alligator crack</option>
-<option value="rough_patch">Rough patch</option>
-<option value="manhole">Manhole</option>
+<option value="patch_repair">Patch repair</option>
+<option value="other_surface_damage">Other surface damage</option>
         </select>
 
         <label for="severityFilter">Minimum severity</label>
@@ -68,15 +69,14 @@
         </select>
         <button id="resetFiltersBtn" class="reset-btn">Reset Filters</button>
         <div class="legend">
-          <h3>Legend</h3>
-          <div class="legend-item"><span class="dot pothole"></span> Pothole</div>
-          <div class="legend-item"><span class="dot longitudinal_crack"></span> Longitudinal crack</div>
-          <div class="legend-item"><span class="dot transverse_crack"></span> Transverse crack</div>
-          <div class="legend-item"><span class="dot alligator_crack"></span> Alligator crack</div>
-          <div class="legend-item"><span class="dot patch_repair_area"></span> Patch / repair area</div>
-          <div class="legend-item"><span class="dot other_surface_damage"></span> Other surface damage</div>
-          <div class="legend-item"><span class="dot manhole_utility_cover"></span> Manhole / utility cover</div>
-        </div>
+  <h3>Legend</h3>
+  <div class="legend-item"><span class="dot" style="background:#dc2626"></span> Pothole</div>
+<div class="legend-item"><span class="dot" style="background:#2563eb"></span> Longitudinal crack</div>
+<div class="legend-item"><span class="dot" style="background:#7c3aed"></span> Transverse crack</div>
+<div class="legend-item"><span class="dot" style="background:#d97706"></span> Alligator crack</div>
+<div class="legend-item"><span class="dot" style="background:#059669"></span> Patch repair</div>
+<div class="legend-item"><span class="dot" style="background:#475569"></span> Other surface damage</div>
+</div>
       </aside>
 
       <section class="map-section">

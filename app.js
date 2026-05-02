@@ -5,11 +5,11 @@ L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
 }).addTo(map);
 const classColors = {
   pothole: "#dc2626",
-  crack: "#2563eb", 
+  longitudinal_crack: "#2563eb",
+  transverse_crack: "#7c3aed",
   alligator_crack: "#d97706",
-  rough_patch: "#059669",
-  manhole: "#db2777",
-  unknown: "#475569"
+  patch_repair: "#059669",
+  other_surface_damage: "#475569"
 };
 const activityListEl = document.getElementById("activityList");
 const exportBtn = document.getElementById("exportBtn");
@@ -49,7 +49,8 @@ function createColorIcon(color) {
 }
 
 function formatClassName(value) {
-  return value.replaceAll("_", " ");
+  if (!value) return "Unknown";
+  return String(value).replaceAll("_", " ");
 }
 function setLiveChipStatus(status) {
   liveChip.classList.remove("chip-live", "chip-loading", "chip-offline");
@@ -88,21 +89,15 @@ function getSeverityStatus(severity) {
 function showDefaultDetails() {
   eventDetailsEl.innerHTML = `
     <div class="empty-state">
-      <strong>Select an event</strong>
-      Click a table row to view anomaly details.
+      <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="1.5">
+        <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1.73 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+        <path d="M3.27 6.96 12 12.01l8.73-5.05M12 22.08V12"></path>
+      </svg>
+      <strong>Select an event from the table</strong>
+      <p>Click any row to see anomaly details, images, and GPS location.</p>
     </div>
   `;
 }
-
-function showNoResultsDetails() {
-  eventDetailsEl.innerHTML = `
-    <div class="empty-state">
-      <strong>No matching events</strong>
-      Try changing the selected filters.
-    </div>
-  `;
-}
-
 function showErrorDetails(message) {
   eventDetailsEl.innerHTML = `
     <div class="empty-state">
@@ -130,7 +125,15 @@ function showEventDetails(event) {
     <div class="detail-row"><span class="detail-label">Event ID:</span> ${event.id}</div>
     <div class="detail-row"><span class="detail-label">Device:</span> ${event.device?.name || "N/A"}</div>
     <div class="detail-row"><span class="detail-label">Class:</span> ${formatClassName(event.event_type)}</div>
-    <div class="detail-row"><span class="detail-label">Severity:</span> ${event.severity}</div>
+    <div class="detail-row">
+  <span class="detail-label">Severity:</span>
+  <div style="display:flex;align-items:center;gap:8px;">
+    <span>${event.severity}</span>
+    <div style="flex:1;height:6px;background:#e5e7eb;border-radius:3px;overflow:hidden;">
+      <div style="width:${Math.min(event.severity*100,100)}%;height:100%;background:linear-gradient(90deg,#dc2626 0%,#d97706 50%,#059669 100%);"></div>
+    </div>
+  </div>
+</div>
     <div class="detail-row"><span class="detail-label">Confidence:</span> ${event.confidence}</div>
     <div class="detail-row"><span class="detail-label">Speed:</span> ${event.speed_kmph ?? "N/A"} km/h</div>
     <div class="detail-row"><span class="detail-label">Detected at:</span> ${event.detected_at}</div>
@@ -195,81 +198,101 @@ function renderDashboard(events) {
   const criticalCount = events.filter(e => parseFloat(e.severity) >= 0.7).length;
   const normalCount = events.filter(e => parseFloat(e.severity) < 0.7).length;
 
-
   criticalChip.textContent = `Critical: ${criticalCount}`;
   normalChip.textContent = `Normal: ${normalCount}`;
-const classCounts = events.reduce((acc, event) => {
-  acc[event.event_type] = (acc[event.event_type] || 0) + 1;
-  return acc;
-}, {});
 
-const mostCommonClass =
-  Object.entries(classCounts).sort((a, b) => b[1] - a[1])[0]?.[0] || "N/A";
+  const classCounts = events.reduce((acc, event) => {
+    const type =
+      event.event_type ||
+      event.class_name ||
+      event.anomaly_type ||
+      event.damage_type ||
+      "other_surface_damage";
 
-totalEventsEl.textContent = events.length;
-criticalEventsEl.textContent = criticalCount;
-maxSeverityEl.textContent = mostCommonClass.replaceAll("_", " ");
+    acc[type] = (acc[type] || 0) + 1;
+    return acc;
+  }, {});
+
+  const mostCommonClass =
+    Object.entries(classCounts).sort((a, b) => b[1] - a[1])[0]?.[0] || "N/A";
+
+  totalEventsEl.textContent = events.length;
+  criticalEventsEl.textContent = criticalCount;
+  maxSeverityEl.textContent = mostCommonClass.replaceAll("_", " ");
 
   if (events.length === 0) {
-  tableBody.innerHTML = `
-    <tr>
-      <td colspan="4">
-        <div class="empty-state">
-          <strong>No events found</strong>
-          No anomalies match the selected filters. Try changing class or severity.
-        </div>
-      </td>
-    </tr>
-  `;
-  eventDetailsEl.innerHTML = `
-    <div class="empty-state">
-      <strong>No matching events</strong>
-      Try changing the selected filters or reset them to view all data.
-    </div>
-  `;
-  return;
-}
+    tableBody.innerHTML = `
+      <tr>
+        <td colspan="4">
+          <div class="empty-state">
+            <strong>No events found</strong>
+            No anomalies match the selected filters. Try changing class or severity.
+          </div>
+        </td>
+      </tr>
+    `;
+    eventDetailsEl.innerHTML = `
+      <div class="empty-state">
+        <strong>No matching events</strong>
+        Try changing the selected filters or reset them to view all data.
+      </div>
+    `;
+    return;
+  }
 
   showDefaultDetails();
 
   events.forEach(event => {
-    const color = classColors[event.event_type] || "#334155";
+    const eventType =
+      event.event_type ||
+      event.class_name ||
+      event.anomaly_type ||
+      event.damage_type ||
+      "other_surface_damage";
 
-    const marker = L.marker([event.latitude, event.longitude], {
-      icon: createColorIcon(color)
-    }).bindPopup(`
-      <div class="popup-title">${formatClassName(event.event_type)}</div>
-      <div class="popup-meta">
-        Severity: ${event.severity}<br>
-        Confidence: ${event.confidence}<br>
-        Time: ${event.detected_at}<br>
-        Lat: ${event.latitude}<br>
-        Lon: ${event.longitude}
-      </div>
-    `);
+    const color = classColors[eventType] || "#334155";
+    let marker = null;
 
-    marker.addTo(markersLayer);
+    if (event.latitude != null && event.longitude != null) {
+      marker = L.marker([event.latitude, event.longitude], {
+        icon: createColorIcon(color)
+      }).bindPopup(`
+        <div class="popup-title">${formatClassName(eventType)}</div>
+        <div class="popup-meta">
+          Severity: ${event.severity ?? "N/A"}<br>
+          Confidence: ${event.confidence ?? "N/A"}<br>
+          Time: ${event.detected_at ?? "N/A"}<br>
+          Lat: ${event.latitude}<br>
+          Lon: ${event.longitude}
+        </div>
+      `);
+
+      marker.addTo(markersLayer);
+    }
 
     const row = document.createElement("tr");
+
     row.innerHTML = `
-      <td><span class="badge ${event.event_type}">${formatClassName(event.event_type)}</span></td>
-      <td>${event.severity}</td>
-      <td>${event.confidence}</td>
-      <td>${event.detected_at}</td>
+      <td><span class="badge ${eventType}">${formatClassName(eventType)}</span></td>
+      <td>${event.severity ?? "N/A"}</td>
+      <td>${event.confidence ?? "N/A"}</td>
+      <td>${event.detected_at ?? "N/A"}</td>
     `;
 
     row.style.cursor = "pointer";
     row.addEventListener("click", () => {
-      map.setView([event.latitude, event.longitude], 18);
-      marker.openPopup();
+      if (event.latitude != null && event.longitude != null && marker) {
+        map.setView([event.latitude, event.longitude], 18);
+        marker.openPopup();
+      }
       showEventDetails(event);
     });
 
     tableBody.appendChild(row);
   });
+
   renderRecentActivity(events);
 }
-
 function applyFilters() {
   const filteredEvents = getFilteredEvents();
   renderDashboard(filteredEvents);
@@ -347,12 +370,13 @@ async function loadEventsFromBackend() {
       </tr>
     `;
 
-    const response = await fetch("https://roadsense-backend-v2.onrender.com/api/events/?format=json");
+    const response = await fetch("https://roadsense-backend.onrender.com/api/events/?format=json");
     if (!response.ok) {
       throw new Error(`HTTP ${response.status}`);
     }
 
     const data = await response.json();
+    console.log("First backend event:", data[0]);
     allEvents = data;
     renderDashboard(allEvents);
     setLiveChipStatus("live");

@@ -370,7 +370,7 @@ async function loadEventsFromBackend() {
       </tr>
     `;
 
-    const response = await fetch("https://roadsense-backend.onrender.com/api/events/?format=json");
+    const response = await fetch("https://roadsense-backend-pyid.onrender.com/api/events/?format=json");
     if (!response.ok) {
       throw new Error(`HTTP ${response.status}`);
     }

@@ -105,6 +105,17 @@ function captureSnapshot() {
 
     const ctx = snapshotCanvas.getContext("2d");
     ctx.drawImage(video, 0, 0, width, height);
+      // Enhance contrast for better YOLO detection 
+    const imageData = ctx.getImageData(0, 0, width, height);
+    const data = imageData.data;
+    const contrast = 1.3;
+    const brightness = 10;
+    for (let i = 0; i < data.length; i += 4) {
+    data[i]   = Math.min(255, Math.max(0, contrast * (data[i]   - 128) + 128 + brightness));
+    data[i+1] = Math.min(255, Math.max(0, contrast * (data[i+1] - 128) + 128 + brightness));
+    data[i+2] = Math.min(255, Math.max(0, contrast * (data[i+2] - 128) + 128 + brightness));
+     } 
+    ctx.putImageData(imageData, 0, 0);
 
     snapshotCanvas.toBlob((blob) => {
       if (!blob) {
@@ -145,7 +156,7 @@ async function sendSnapshotToBackend() {
     formData.append("speed_kmph", 18.5);
     formData.append("detected_at", new Date().toISOString());
 
-    const res = await fetch("https://roadsense-backend-v2.onrender.com/api/detect/", {
+    const res = await fetch("https://roadsense-backend.onrender.com/api/events/detect/", {
       method: "POST",
       body: formData
     });

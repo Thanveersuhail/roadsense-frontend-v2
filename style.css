@@ -133,18 +133,19 @@ th, td {
   display: inline-block;
   padding: 5px 10px;
   border-radius: 999px;
-  color: white;
   font-size: 12px;
   font-weight: bold;
+  color: #0f172a;
+  background: #e2e8f0;
+  border: 1px solid #cbd5e1;
 }
 
-.pothole { background: #dc2626; }
-.longitudinal_crack { background: #2563eb; }
-.transverse_crack { background: #7c3aed; }
-.alligator_crack { background: #d97706; }
-.patch_repair_area { background: #059669; }
-.other_surface_damage { background: #475569; }
-.manhole_utility_cover { background: #db2777; }
+.pothole { background: #dc2626; color: white; border-color: #dc2626; }
+.longitudinal_crack { background: #2563eb; color: white; border-color: #2563eb; }
+.transverse_crack { background: #7c3aed; color: white; border-color: #7c3aed; }
+.alligator_crack { background: #d97706; color: white; border-color: #d97706; }
+.patch_repair { background: #059669; color: white; border-color: #059669; }
+.other_surface_damage { background: #475569; color: white; border-color: #475569; }
 
 .popup-title {
   font-weight: bold;
@@ -430,4 +431,35 @@ th, td {
   border: 1px solid #e2e8f0;
   padding: 8px 10px;
   border-radius: 10px;
+}
+
+/* ✅ MOBILE RESPONSIVE */
+@media (max-width: 1024px) {
+  .layout {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto 1fr auto;
+    height: auto;
+    max-height: calc(100vh - 200px);
+  }
+  .sidebar { order: 3; }
+  .map-section { order: 1; height: 400px; }
+  .right-panel { order: 2; grid-template-rows: 1fr auto; }
+  .stats-row { grid-template-columns: repeat(2, 1fr); }
+}
+
+/* ✅ MISSING CHIP STYLES */
+.chip-critical { background: #fef2f2; color: #991b1b; border-color: #fecaca; }
+.chip-normal { background: #eff6ff; color: #1d4ed8; border-color: #bfdbfe; }
+
+/* ✅ BETTER MAP SIZING */
+.map-section { display: flex; flex-direction: column; }
+#map { flex: 1; min-height: 400px; }
+
+/* ✅ LEGEND DOTS */
+.legend .dot { width: 14px; height: 14px; border-radius: 50%; box-shadow: 0 0 0 1px white; }
+
+@keyframes spin { to { transform: rotate(360deg); } }
+.loading-spinner {
+  width: 20px; height: 20px; border: 2px solid #e5e7eb; border-top-color: #2563eb;
+  border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 8px;
 }
